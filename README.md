@@ -1,4 +1,4 @@
-Router
--Home
+Pages
+-Home/auth
 -Chicken Event
 -Ohsal Battle
