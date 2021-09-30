@@ -1,16 +1,23 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  name: {
+  discordId: {
     type: String,
     required: true,
   },
-  password: {
+  username: {
+    type: String,
+    required: true,
+  },
+  avatar: {
     type: String,
   },
   admin: {
     type: Boolean,
     default: false,
+  },
+  guildExist: {
+    type: Object,
   },
 });
 
