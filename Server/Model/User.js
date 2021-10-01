@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  guildExist: {
+  guild: {
     type: Object,
   },
 });

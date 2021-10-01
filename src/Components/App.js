@@ -6,8 +6,8 @@ function App() {
   const [auth, setAuth] = useState(false);
 
   const authCheck = async () => {
-    const result = await axios.get("/auth/authCheck");
-    console.log(result.data);
+    const { data } = await axios.get("/auth/authCheck");
+    setAuth(data);
   };
   useEffect(authCheck);
   return (

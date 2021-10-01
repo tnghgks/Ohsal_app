@@ -2,11 +2,9 @@ import express from "express";
 import session from "express-session";
 import passport from "./passport";
 import authRouter from "./router";
-import User from "./Model/User";
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 import "./db";
-import mongoose from "mongoose";
 
 dotenv.config();
 

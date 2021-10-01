@@ -1,4 +1,4 @@
-.auth__Container {
+.Wrapper {
   width: 100%;
   height: 100vh;
   background-color: brown;
@@ -7,9 +7,13 @@
   align-items: center;
 }
 
-.authForm {
+.auth__Container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 10px;
+}
+
+.auth__Container button {
+  display: block;
 }

@@ -10,11 +10,11 @@ var DiscordStrategy = passportDiscord.Strategy;
 var scopes = ["identify", "email", "guilds"];
 
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+  done(null, user);
 });
 
-passport.deserializeUser(function (id, done) {
-  done(null, id);
+passport.deserializeUser(function (user, done) {
+  done(null, user);
 });
 
 passport.use(
@@ -26,6 +26,7 @@ passport.use(
       scope: scopes,
     },
     async function (accessToken, refreshToken, profile, done) {
+      let user;
       const userExist = await User.exists({ discordId: profile.id });
       const guildExist = profile.guilds.find(
         (guild) => guild.id === "490813172857700353" // 오살 서버 없는 계정 Block test 필요
@@ -33,15 +34,17 @@ passport.use(
 
       if (!userExist) {
         if (guildExist) {
-          await User.create({
+          user = await User.create({
             discordId: profile.id,
             username: profile.username,
             avatar: profile.avatar,
-            guildExist,
+            guild: guildExist,
           });
         }
+      } else {
+        user = await User.find({ discordId: profile.id });
       }
-      return done(null, profile);
+      return done(null, user);
     }
   )
 );

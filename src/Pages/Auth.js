@@ -2,13 +2,20 @@ import React from "react";
 
 const Auth = () => {
   return (
-    <div className="auth__Container">
-      <form className="authForm">
-        <input type="text" name="username" />
-        <input type="password" name="password" />
-        <input type="submit" value="로그인" />
-        <button>회원가입</button>
-      </form>
+    <div className="Wrapper">
+      <div className="auth__Container">
+        <button
+          onClick={() =>
+            window.open(
+              "http://localhost:3001/auth",
+              "_blank",
+              "width=500,height=800"
+            )
+          }
+        >
+          디스코드 로그인
+        </button>
+      </div>
     </div>
   );
 };
