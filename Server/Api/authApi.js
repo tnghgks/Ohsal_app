@@ -1,13 +1,12 @@
 export const authCheck = (req, res) => {
-  try {
-    const { user } = req.session.passport;
-    if (user) {
-      res.send(user).end();
-    } else {
-      res.send(401).end();
-    }
-  } catch (error) {
-    console.log(error);
-    return;
+  if (req.isAuthenticated()) {
+    return res.json(req.user);
   }
+  return res.send(false);
+};
+
+export const logout = (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.end();
 };

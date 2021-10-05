@@ -26,7 +26,7 @@ passport.use(
       scope: scopes,
     },
     async function (accessToken, refreshToken, profile, done) {
-      let user;
+      let user = {};
       const userExist = await User.exists({ discordId: profile.id });
       const guildExist = profile.guilds.find(
         (guild) => guild.id === "490813172857700353" // 오살 서버 없는 계정 Block test 필요
@@ -41,6 +41,7 @@ passport.use(
             guild: guildExist,
           });
         }
+        return done(null);
       } else {
         user = await User.find({ discordId: profile.id });
       }

@@ -1,19 +1,21 @@
 import express from "express";
-import { authCheck } from "./Api/authApi";
+import { authCheck, logout } from "./Api/authApi";
 import passport from "passport";
+import { loginCheck } from "./middleware";
 
 const router = express.Router();
 
 router.get("/authCheck", authCheck);
-router.get("/", passport.authenticate("discord"));
+router.get("/logout", logout);
+router.get("/", loginCheck, passport.authenticate("discord"));
 router.get(
   "/redirect",
   passport.authenticate("discord", {
-    failureRedirect: "/notFound",
+    failureRedirect: "http://localhost:3000/close",
   }),
   (req, res) => {
-    console.log(req.session);
-    res.redirect("/");
+    //console.log(req.user);
+    res.redirect("http://localhost:3000/close");
   }
 );
 

@@ -1,5 +1,6 @@
 import express from "express";
 import session from "express-session";
+import morgan from "morgan";
 import passport from "./passport";
 import authRouter from "./router";
 import MongoStore from "connect-mongo";
@@ -11,6 +12,7 @@ dotenv.config();
 const app = express();
 const PORT = 3001;
 
+app.use(morgan("tiny"));
 app.use(
   session({
     secret: "2kdfjasdlsasahjksda",
