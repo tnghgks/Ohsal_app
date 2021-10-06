@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  nickname: {
+    type: String,
+  },
   avatar: {
     type: String,
   },
@@ -18,6 +21,10 @@ const userSchema = new mongoose.Schema({
   },
   guild: {
     type: Object,
+  },
+  rankPoint: {
+    type: Number,
+    default: 0,
   },
 });
 

@@ -2,9 +2,11 @@ import express from "express";
 import session from "express-session";
 import morgan from "morgan";
 import passport from "./passport";
-import authRouter from "./router";
+import authRouter from "./Router/authRouter";
+import apiRouter from "./Router/apiRouter";
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
+import "./Bot/discordBot";
 import "./db";
 
 dotenv.config();
@@ -28,6 +30,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRouter);
+app.use("/api", apiRouter);
 app.get("/", (req, res) => {
   return res.send(200);
 });

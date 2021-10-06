@@ -9,9 +9,6 @@ function App() {
 
   useEffect(() => {
     const authCheck = async () => {
-      window.addEventListener("message", function (event) {
-        console.log(event);
-      });
       const { data } = await axios.get("/auth/authCheck");
       console.log(data);
       setAuth(data);
