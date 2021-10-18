@@ -10,12 +10,19 @@ var DiscordStrategy = passportDiscord.Strategy;
 
 var scopes = ["identify", "email", "guilds"];
 
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser(function (userId, done) {
+  done(null, userId);
 });
 
-passport.deserializeUser(function (user, done) {
-  done(null, user);
+passport.deserializeUser(async function (userId, done) {
+  try {
+    const user = await User.findOne({ discordId: userId });
+
+    done(null, user);
+  } catch (err) {
+    console.log("deserializeUser Error !!");
+    done(null);
+  }
 });
 
 const discorStrat = new DiscordStrategy(
@@ -27,27 +34,42 @@ const discorStrat = new DiscordStrategy(
   },
   async function (accessToken, refreshToken, profile, done) {
     let user = {};
-    console.log(accessToken);
-    profile.refreshToken = refreshToken;
     const userExist = await User.exists({ discordId: profile.id });
     const guildExist = profile.guilds.find(
       (guild) => guild.id === "490813172857700353" // 오살 서버 없는 계정 Block test 필요
     );
 
     if (!userExist) {
+      // 로그인한 유저가 User DB에 없으면 새로 생성
       if (guildExist) {
+        // 오살 서버에 참가한 계정인지 확인
+        /* user = await User.create({
+          discordId: profile.id,
+          username: profile.username,
+          avatar: profile.avatar,
+          guild: guildExist,
+        }); */
         user = await User.create({
           discordId: profile.id,
           username: profile.username,
           avatar: profile.avatar,
           guild: guildExist,
+          accessToken,
+          refreshToken,
         });
       }
       return done(null);
     } else {
-      user = await User.find({ discordId: profile.id });
+      try {
+        user = await User.findOneAndUpdate(
+          { discordId: profile.id },
+          { accessToken, refreshToken }
+        );
+      } catch (error) {
+        console.log("계정 인증 에러");
+      }
     }
-    return done(null, user);
+    return done(null, user.discordId);
   }
 );
 

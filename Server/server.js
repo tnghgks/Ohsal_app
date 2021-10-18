@@ -6,6 +6,7 @@ import authRouter from "./Router/authRouter";
 import apiRouter from "./Router/apiRouter";
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import "./Bot/discordBot";
 import "./db";
 
@@ -22,12 +23,13 @@ app.use(
     cookie: {
       maxAge: 60000 * 60 * 24,
     },
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser(process.env.COOKIE_SIGN));
 
 app.use("/auth", authRouter);
 app.use("/api", apiRouter);
