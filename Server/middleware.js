@@ -71,24 +71,37 @@ export const tokenTest = async (req, res, next) => {
     if (!accessToken) {
       return next();
     }
-    const { refreshToken } = await User.findOne({ accessToken });
 
-    const data = {
-      client_id: process.env.DISCORD_CLIENT_ID,
-      client_secret: process.env.DISCORD_SECRET,
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-    };
-    const headers = {
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
-    const result = await axios.post(
-      "https://discord.com/api/v8/oauth2/token",
-      data,
-      { headers }
+    const user = await User.findOne({ accessToken });
+    if (!user) {
+      return next();
+    }
+
+    console.log(user);
+    const params = new URLSearchParams(
+      `client_id=${process.env.DISCORD_CLIENT_ID}&client_secret=${process.env.DISCORD_SECRET}&grant_type=refresh_token&refresh_token=${user.refreshToken}`
     );
-    console.log(result);
-    console.log(refreshToken);
+
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+    };
+    const { data } = await axios.post(
+      "https://discordapp.com/api/oauth2/token",
+      params,
+      config
+    );
+    await User.findOneAndUpdate(
+      { accessToken },
+      {
+        $set: {
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
+        },
+      }
+    );
+    console.log(data);
   } catch (error) {
     console.log(error);
   }
