@@ -1,20 +1,14 @@
 import express from "express";
 import { authCheck, logout } from "../Api/authApi";
 import passport from "passport";
-import { loginCheck, cookieCheck, tokenTest } from "../middleware";
+import { loginCheck, cookieCheck } from "../middleware";
 import User from "../Model/User";
 
 const router = express.Router();
 
 router.get("/authCheck", authCheck);
 router.get("/logout", logout);
-router.get(
-  "/",
-  tokenTest,
-  cookieCheck,
-  loginCheck,
-  passport.authenticate("discord")
-);
+router.get("/", cookieCheck, loginCheck, passport.authenticate("discord"));
 router.get(
   "/redirect",
   passport.authenticate("discord", {

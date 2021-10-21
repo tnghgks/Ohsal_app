@@ -17,9 +17,13 @@ export const cookieCheck = async (req, res, next) => {
   if (!accessToken) {
     return next();
   }
+  const userData = await User.findOne({ accessToken });
+  if (!userData) {
+    return next();
+  }
+
   try {
     const {
-      // Discord Api 서버에서 AccessToken을 사용하여 사용자 정보 가져오기
       data: { user },
     } = await axios.get("https://discord.com/api/oauth2/@me", {
       headers: {
@@ -28,39 +32,53 @@ export const cookieCheck = async (req, res, next) => {
       },
     });
 
-    const userData = await User.findOne({ discordId: user.id }); // DB에 있는 사용자가 맞는지  체크
-
-    if (userData) {
-      // DB에 있으면 passport를 통하여 세션에 로그인시킨다
-      req.logIn(userData.discordId, function (err) {
-        if (err) {
-          return next(err);
-        }
-        return res.redirect("http://localhost:3000/"); // 로그인 후 홈으로 이동
-      });
-    }
+    // DB에 있으면 passport를 통하여 세션에 로그인시킨다
+    req.logIn(user.id, function (err) {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("http://localhost:3000/"); // 로그인 후 홈으로 이동
+    });
   } catch (err) {
+    console.log(err.response.status);
     if (err.response.status === 401) {
       try {
-        const { refreshToken } = await User.findOne({ accessToken });
-
-        const data = {
-          client_id: process.env.DISCORD_CLIENT_ID,
-          client_secret: process.env.DISCORD_SECRET,
-          grant_type: "refresh_token",
-          refresh_token: refreshToken,
-        };
-        const headers = {
-          "Content-Type": "application/x-www-form-urlencoded",
-        };
-        const result = await axios.post(
-          "https://discord.com/api/oauth2/token",
-          data,
-          headers
+        const params = new URLSearchParams(
+          `client_id=${process.env.DISCORD_CLIENT_ID}&client_secret=${process.env.DISCORD_SECRET}&grant_type=refresh_token&refresh_token=${userData.refreshToken}`
         );
-      } catch {}
+
+        const config = {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          },
+        };
+        const { data } = await axios.post(
+          "https://discordapp.com/api/oauth2/token",
+          params,
+          config
+        );
+        await User.findOneAndUpdate(
+          { accessToken },
+          {
+            $set: {
+              accessToken: data.access_token,
+              refreshToken: data.refresh_token,
+            },
+          }
+        );
+        console.log(data);
+
+        res.cookie("token", data.access_token, {
+          expires: new Date(Date.now() + 100000002),
+          httpOnly: true,
+          signed: true,
+        });
+
+        return res.redirect("/");
+      } catch (error) {
+        console.log(error);
+      }
     }
-    console.log(typeof err.response.status);
   }
 };
 
@@ -77,7 +95,6 @@ export const tokenTest = async (req, res, next) => {
       return next();
     }
 
-    console.log(user);
     const params = new URLSearchParams(
       `client_id=${process.env.DISCORD_CLIENT_ID}&client_secret=${process.env.DISCORD_SECRET}&grant_type=refresh_token&refresh_token=${user.refreshToken}`
     );

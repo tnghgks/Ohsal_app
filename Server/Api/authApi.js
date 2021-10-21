@@ -7,6 +7,5 @@ export const authCheck = (req, res) => {
 
 export const logout = (req, res) => {
   req.logout();
-  req.session.destroy();
-  res.end();
+  return res.redirect("/");
 };
