@@ -6,6 +6,12 @@ export const authCheck = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  req.logout();
-  return res.redirect("/");
+  if (req.isAuthenticated()) {
+    req.logout();
+    req.session.save(() => {
+      res.send(false);
+    });
+  } else {
+    res.send(false);
+  }
 };

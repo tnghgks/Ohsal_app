@@ -1,10 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
-const Header = ({ authenticate }) => {
-  const handleClick = async () => {
-    await axios.get("/auth/logout");
+const Header = ({ authenticate, setAuth }) => {
+  const history = useHistory();
+  const handleClick = async (event) => {
+    event.preventDefault();
+    try {
+      const { data } = await axios.get("/auth/logout");
+      if (!data) {
+        setAuth(data);
+        history.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

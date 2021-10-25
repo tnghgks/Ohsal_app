@@ -7,11 +7,11 @@ import Battle from "Pages/Battle";
 import NotFound from "Pages/NotFound";
 import Header from "Components/Header";
 
-const AppRouter = ({ authenticate }) => (
+const AppRouter = ({ authenticate, setAuth }) => (
   <Router>
     {authenticate && authenticate ? (
       <>
-        <Header authenticate={authenticate} />
+        <Header authenticate={authenticate} setAuth={setAuth} />
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/event" component={ChickenEvent} />

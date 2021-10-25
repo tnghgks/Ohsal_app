@@ -10,14 +10,19 @@ function App() {
   useEffect(() => {
     const authCheck = async () => {
       const { data } = await axios.get("/auth/authCheck");
-      console.log(data);
       setAuth(data);
       setLoading(false);
     };
     authCheck();
   }, []);
   return (
-    <>{loading && loading ? <Loader /> : <Router authenticate={auth} />}</>
+    <>
+      {loading && loading ? (
+        <Loader />
+      ) : (
+        <Router authenticate={auth} setAuth={setAuth} />
+      )}
+    </>
   );
 }
 
