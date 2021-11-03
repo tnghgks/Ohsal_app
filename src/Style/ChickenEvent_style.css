@@ -1,6 +1,6 @@
 .ChickenEvent__container {
   width: 40%;
-  height: calc(100vh - 50px);
+  height: 100vh;
   margin: 0 auto;
   background-color: #30336b;
 }
