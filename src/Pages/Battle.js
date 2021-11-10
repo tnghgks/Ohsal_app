@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import io from "socket.io-client";
 import styled from "styled-components";
+
+const socket = io("http://localhost:3001/");
 
 const Container = styled.div`
   display: flex;
@@ -12,6 +15,10 @@ const Container = styled.div`
 const H1 = styled.h1``;
 
 const Battle = () => {
+  useEffect(() => {
+    socket.emit("message", "hi");
+  }, []);
+
   return (
     <Container>
       <H1>Battle</H1>

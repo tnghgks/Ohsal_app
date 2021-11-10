@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -43,22 +43,22 @@ const MenuButton = styled(Link)`
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background-color: ${(props) => (props.current ? "#000" : "#fff")};
+  background-color: ${(props) => (props.$current ? "#000" : "#fff")};
 `;
 const Logout = styled.a`
   margin-top: 20px;
 `;
 
-const Header = ({ authenticate, setAuth }) => {
+const Header = ({ authenticate, setAuth, location }) => {
   const history = useHistory();
-  const [path, setPath] = useState(history.location.pathname);
+  const [path, setPath] = useState(location.pathname);
 
   useEffect(() => {
-    console.log(history);
-    setPath(history.location.pathname);
-  }, [history.location.pathname]);
+    setPath(location.pathname);
+    return () => setPath(location.pathname);
+  }, [location]);
 
-  const handleClick = async (event) => {
+  const handleLogout = async (event) => {
     event.preventDefault();
     try {
       const { data } = await axios.get("/auth/logout");
@@ -80,20 +80,20 @@ const Header = ({ authenticate, setAuth }) => {
         alt={authenticate.avatar}
       />
       {authenticate && authenticate ? (
-        <Logout href="/" onClick={handleClick}>
+        <Logout href="/" onClick={handleLogout}>
           <FontAwesomeIcon icon={faSignOutAlt} />
         </Logout>
       ) : (
         ""
       )}
       <Menu>
-        <MenuButton to="/" current={path && path === "/"}>
+        <MenuButton to="/" $current={path && path === "/"}>
           <FontAwesomeIcon icon={faHome} />
         </MenuButton>
-        <MenuButton to="/event" current={path && path === "/event"}>
+        <MenuButton to="/event" $current={path && path === "/event"}>
           <FontAwesomeIcon icon={faCalendarAlt} />
         </MenuButton>
-        <MenuButton to="/battle" current={path && path === "/battle"}>
+        <MenuButton to="/battle" $current={path && path === "/battle"}>
           <FontAwesomeIcon icon={faDrumstickBite} />
         </MenuButton>
       </Menu>
@@ -101,4 +101,4 @@ const Header = ({ authenticate, setAuth }) => {
   );
 };
 
-export default Header;
+export default withRouter(Header);
