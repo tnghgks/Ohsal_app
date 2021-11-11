@@ -26,7 +26,6 @@ const wsServer = SocketIO(httpServer, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 wsServer.on("connection", (socket) => {
-  console.log("접속완료");
   socket.on("message", (data) => console.log(data));
 });
 
