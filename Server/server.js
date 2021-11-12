@@ -4,6 +4,7 @@ import morgan from "morgan";
 import passport from "./passport";
 import authRouter from "./Router/authRouter";
 import apiRouter from "./Router/apiRouter";
+import battleRouter from "./Router/battleRouter";
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -48,6 +49,7 @@ app.use(cookieParser(process.env.COOKIE_SIGN));
 
 app.use("/auth", authRouter);
 app.use("/api", apiRouter);
+app.use("/battle", battleRouter);
 app.get("/", (req, res) => {
   return res.send(200);
 });

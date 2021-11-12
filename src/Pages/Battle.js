@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 import BattleMakerForm from "Components/BattleMakerForm";
+import BattleList from "Components/BattleList";
+import axios from "axios";
 
 const socket = io("http://localhost:3001/");
 
@@ -10,7 +12,6 @@ const Container = styled.div`
   justify-content: center;
   width: 100%;
   height: 100vh;
-  background-color: #637373;
   padding-left: 50px;
 `;
 
@@ -19,70 +20,51 @@ const BattleContainer = styled.div`
   height: 100vh;
   background-color: cadetblue;
 `;
-const BattleList = styled.div`
-  position: fixed;
-  width: 250px;
+const Main = styled.div`
+  width: calc(100% - 250px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
-  background-color: blueviolet;
-`;
-
-const Title = styled.h1`
-  width: 100%;
-  height: 50px;
-  background-color: coral;
-  text-align: center;
-  line-height: 50px;
-`;
-
-const List = styled.ul`
-  width: 100%;
-  height: 100%;
-`;
-const BattleName = styled.li`
-  width: 100%;
-  height: 50px;
-  background-color: cyan;
-`;
-const BattleMaker = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 50px;
-  background-color: cornsilk;
-  text-align: center;
+  background-color: darkslategray;
+  text-align: left;
+  margin-left: 250px;
   line-height: 50px;
 `;
 const Battle = () => {
-  const battleMaker = useRef();
+  const [formVisible, setFormVisible] = useState(false);
+  const [mainData, setMainData] = useState(false);
+  const [battleList, setBattleList] = useState();
   const battleContainer = useRef();
-  const onClick = () => {
-    if (battleContainer.current) {
-      battleContainer.current.append("<BattleMakerForm></BattleMakerForm>");
-    }
-  };
 
-  useEffect(() => {
-    if (battleMaker.current) {
-      battleMaker.current.addEventListener("click", onClick);
-    }
-    return () => {
-      if (battleMaker.current) {
-        battleMaker.current.removeEventListener("click", onClick);
-      }
-    };
-    //socket.emit("message", "hi");
-  }, []);
+  const getBattle = async () => {
+    const result = await axios({
+      url: "/battle/getBattleList",
+      method: "get",
+    });
+    setBattleList(result.data);
+  };
 
   return (
     <Container>
       <BattleContainer ref={battleContainer}>
-        <BattleList>
-          <Title>내전 목록</Title>
-          <List>
-            <BattleName>오살과 함께하는 즐거운 내전</BattleName>
-            <BattleMaker ref={battleMaker}>+ 내전만들기</BattleMaker>
-          </List>
-        </BattleList>
+        <BattleList
+          setFormVisible={setFormVisible}
+          battleList={battleList}
+          getBattle={getBattle}
+        />
+        <Main>
+          {formVisible && formVisible ? (
+            <BattleMakerForm
+              setMainData={setMainData}
+              setFormVisible={setFormVisible}
+              getBattle={getBattle}
+            />
+          ) : (
+            ""
+          )}
+          {mainData ? Object.values(mainData) : ""}
+        </Main>
       </BattleContainer>
     </Container>
   );
