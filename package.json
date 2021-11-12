@@ -36,7 +36,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "dev": "nodemon server/server.js --exec babel-node",
+    "dev": "nodemon --ignore ./src server/server.js --exec babel-node",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

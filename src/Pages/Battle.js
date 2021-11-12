@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 import BattleMakerForm from "Components/BattleMakerForm";
 import BattleList from "Components/BattleList";
+import BattleDetail from "Components/BattleDetail";
 import axios from "axios";
 
 const socket = io("http://localhost:3001/");
@@ -52,6 +53,7 @@ const Battle = () => {
           setFormVisible={setFormVisible}
           battleList={battleList}
           getBattle={getBattle}
+          setMainData={setMainData}
         />
         <Main>
           {formVisible && formVisible ? (
@@ -63,7 +65,15 @@ const Battle = () => {
           ) : (
             ""
           )}
-          {mainData ? Object.values(mainData) : ""}
+          {mainData && mainData ? (
+            <BattleDetail
+              data={mainData}
+              getBattle={getBattle}
+              setMainData={setMainData}
+            />
+          ) : (
+            ""
+          )}
         </Main>
       </BattleContainer>
     </Container>
