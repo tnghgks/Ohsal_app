@@ -27,7 +27,15 @@ const wsServer = SocketIO(httpServer, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 wsServer.on("connection", (socket) => {
-  socket.on("message", (data) => console.log(data));
+  socket.on("join", (room) => {
+    socket.join(room);
+    wsServer.to(room).emit("message", `${socket.id}님이 입장하셨습니다.`);
+  });
+  socket.on("leave", (room) => {
+    socket.leave(room);
+    socket.to(room).emit("message", `${socket.id}님이 퇴장하셨습니다.`);
+  });
+  socket.on("message", (text) => console.log(text));
 });
 
 app.use(morgan("tiny"));

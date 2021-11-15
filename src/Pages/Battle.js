@@ -5,6 +5,7 @@ import BattleMakerForm from "Components/BattleMakerForm";
 import BattleList from "Components/BattleList";
 import BattleDetail from "Components/BattleDetail";
 import axios from "axios";
+import Loader from "Components/Loader";
 
 const socket = io("http://localhost:3001/");
 
@@ -33,6 +34,7 @@ const Main = styled.div`
   line-height: 50px;
 `;
 const Battle = () => {
+  const [loading, setLoading] = useState(true);
   const [formVisible, setFormVisible] = useState(false);
   const [mainData, setMainData] = useState(false);
   const [battleList, setBattleList] = useState();
@@ -54,6 +56,7 @@ const Battle = () => {
           battleList={battleList}
           getBattle={getBattle}
           setMainData={setMainData}
+          setLoading={setLoading}
         />
         <Main>
           {formVisible && formVisible ? (
@@ -65,11 +68,14 @@ const Battle = () => {
           ) : (
             ""
           )}
-          {mainData && mainData ? (
+          {loading && loading ? (
+            <Loader />
+          ) : mainData ? (
             <BattleDetail
               data={mainData}
               getBattle={getBattle}
               setMainData={setMainData}
+              socket={socket}
             />
           ) : (
             ""
