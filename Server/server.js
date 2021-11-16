@@ -27,6 +27,11 @@ const wsServer = SocketIO(httpServer, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 wsServer.on("connection", (socket) => {
+  socket.on("nickname", (nickname) => {
+    socket[nickname] = socket.nickname = nickname;
+    console.log(socket.nickname);
+  });
+
   socket.on("join", (room) => {
     socket.join(room);
     wsServer.to(room).emit("message", `${socket.id}님이 입장하셨습니다.`);
@@ -35,7 +40,9 @@ wsServer.on("connection", (socket) => {
     socket.leave(room);
     socket.to(room).emit("message", `${socket.id}님이 퇴장하셨습니다.`);
   });
-  socket.on("message", (text) => console.log(text));
+  socket.on("message", ({ room, text }) =>
+    wsServer.to(room).emit("message", text)
+  );
 });
 
 app.use(morgan("tiny"));

@@ -16,8 +16,16 @@ passport.serializeUser(function (userId, done) {
 
 passport.deserializeUser(async function (userId, done) {
   try {
-    const user = await User.findOne({ discordId: userId });
-
+    const tokenUser = await User.findOne({ discordId: userId });
+    const user = {
+      discordId: tokenUser.discordId,
+      username: tokenUser.username,
+      nickname: tokenUser.nickname,
+      avatar: tokenUser.avatar,
+      admin: tokenUser.admin,
+      guild: tokenUser.guild,
+      rankPoint: tokenUser.rankPoint,
+    };
     done(null, user);
   } catch (err) {
     console.log("deserializeUser Error !!");

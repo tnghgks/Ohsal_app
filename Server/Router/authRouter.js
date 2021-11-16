@@ -1,12 +1,12 @@
 import express from "express";
-import { authCheck, logout } from "../Api/authApi";
+import { getUser, logout } from "../Api/authApi";
 import passport from "passport";
 import { loginCheck, cookieCheck } from "../middleware";
 import User from "../Model/User";
 
 const router = express.Router();
 
-router.get("/authCheck", authCheck);
+router.get("/authCheck", getUser);
 router.get("/logout", logout);
 router.get("/", cookieCheck, loginCheck, passport.authenticate("discord"));
 router.get(

@@ -1,4 +1,4 @@
-export const authCheck = (req, res) => {
+export const getUser = (req, res) => {
   if (req.isAuthenticated()) {
     return res.json(req.user);
   }
