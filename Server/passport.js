@@ -57,14 +57,27 @@ const discorStrat = new DiscordStrategy(
           avatar: profile.avatar,
           guild: guildExist,
         }); */
-        user = await User.create({
-          discordId: profile.id,
-          username: profile.username,
-          avatar: profile.avatar,
-          guild: guildExist,
-          accessToken,
-          refreshToken,
-        });
+        if (profile.nickname) {
+          user = await User.create({
+            discordId: profile.id,
+            username: profile.username,
+            nickname: profile.nickname,
+            avatar: profile.avatar,
+            guild: guildExist,
+            accessToken,
+            refreshToken,
+          });
+        } else {
+          user = await User.create({
+            discordId: profile.id,
+            username: profile.username,
+            nickname: profile.username,
+            avatar: profile.avatar,
+            guild: guildExist,
+            accessToken,
+            refreshToken,
+          });
+        }
       }
       return done(null);
     } else {

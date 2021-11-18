@@ -27,20 +27,38 @@ const wsServer = SocketIO(httpServer, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 wsServer.on("connection", (socket) => {
+  const userCountChange = (room) => {
+    try {
+      const userArr = [];
+      const users = wsServer.sockets.adapter.rooms.get(room);
+      if (users) {
+        users.forEach((value) => {
+          userArr.push(wsServer.sockets.sockets.get(value).nickname);
+        });
+        wsServer.to(room).emit("userCountChange", userArr);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   socket.on("nickname", (nickname) => {
-    socket[nickname] = socket.nickname = nickname;
+    socket["nickname"] = nickname;
   });
 
   socket.on("join", ({ room, username }) => {
     socket.join(room);
+    userCountChange(room);
     const text = `${username} 님이 입장하셨습니다.`;
-    wsServer.to(room).emit("message", { room, userName: "System", text });
+    wsServer.to(room).emit("message", { room, username: "System", text });
   });
+
   socket.on("leave", ({ room, username }) => {
     socket.leave(room);
+    userCountChange(room);
     const text = `${username}님이 퇴장하셨습니다.`;
     wsServer.to(room).emit("message", { room, username: "System", text });
   });
+
   socket.on("message", ({ room, username, text }) => {
     wsServer.to(room).emit("message", { room, username, text });
   });

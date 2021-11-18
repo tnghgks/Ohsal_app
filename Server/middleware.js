@@ -31,7 +31,16 @@ export const cookieCheck = async (req, res, next) => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-
+    await User.findOneAndUpdate(
+      { discordId: user.id },
+      {
+        $set: {
+          username: user.username,
+          avatar: user.avatar,
+          nickname: user.nickname,
+        },
+      }
+    );
     // DB에 있으면 passport를 통하여 세션에 로그인시킨다
     req.logIn(user.id, function (err) {
       if (err) {
@@ -40,7 +49,6 @@ export const cookieCheck = async (req, res, next) => {
       return res.redirect("http://localhost:3000/"); // 로그인 후 홈으로 이동
     });
   } catch (err) {
-    console.log(err.response.status);
     if (err.response.status === 401) {
       try {
         const params = new URLSearchParams(
@@ -66,7 +74,6 @@ export const cookieCheck = async (req, res, next) => {
             },
           }
         );
-        console.log(data);
 
         res.cookie("token", data.access_token, {
           expires: new Date(Date.now() + 100000002),
