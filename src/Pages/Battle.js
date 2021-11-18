@@ -20,7 +20,6 @@ const Container = styled.div`
 const BattleContainer = styled.div`
   width: 100%;
   height: 100vh;
-  background-color: cadetblue;
 `;
 const Main = styled.div`
   width: calc(100% - 250px);
@@ -28,13 +27,20 @@ const Main = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: darkslategray;
+  background-color: #000;
   text-align: left;
   margin-left: 250px;
   line-height: 50px;
 `;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+`;
+
 const Battle = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [mainData, setMainData] = useState(false);
   const [battleList, setBattleList] = useState();
@@ -65,8 +71,15 @@ const Battle = () => {
               setFormVisible={setFormVisible}
               getBattle={getBattle}
             />
-          ) : (
+          ) : loading ? (
             ""
+          ) : mainData ? (
+            ""
+          ) : (
+            <Image
+              src="Assets/pubg_black_fan_art.jpg"
+              alt="pubg_black_fan_art"
+            />
           )}
           {loading && loading ? (
             <Loader />
