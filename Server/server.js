@@ -35,7 +35,7 @@ wsServer.on("connection", (socket) => {
         users.forEach((value) => {
           userArr.push(wsServer.sockets.sockets.get(value).nickname);
         });
-        wsServer.to(room).emit("userCountChange", userArr);
+        wsServer.to(room).emit("getUsers", userArr);
       }
     } catch (error) {
       console.log(error);
@@ -44,7 +44,32 @@ wsServer.on("connection", (socket) => {
   socket.on("nickname", (nickname) => {
     socket["nickname"] = nickname;
   });
-
+  socket.on("teamShuffle", ({ room }) => {
+    try {
+      let userArr = [];
+      let users = wsServer.sockets.adapter.rooms.get(room);
+      if (users) {
+        users.forEach((value) => {
+          // userArr.push(wsServer.sockets.sockets.get(value).nickname);
+        });
+        userArr = [
+          "호수앱",
+          "현진앱",
+          "지수앱",
+          "윤석앱",
+          "인수앱",
+          "승만앱",
+          "지훈앱",
+          "영민앱",
+          "성민앱",
+        ];
+        userArr.sort(() => Math.random() - 0.5);
+        wsServer.to(room).emit("teamShuffle", userArr);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
   socket.on("join", ({ room, username }) => {
     socket.join(room);
     userCountChange(room);
