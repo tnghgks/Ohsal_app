@@ -62,6 +62,7 @@ wsServer.on("connection", (socket) => {
           "지훈앱",
           "영민앱",
           "성민앱",
+          "인엽앱",
         ];
         userArr.sort(() => Math.random() - 0.5);
         wsServer.to(room).emit("teamShuffle", userArr);
