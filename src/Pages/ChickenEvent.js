@@ -1,7 +1,27 @@
 import React, { useState, useEffect } from "react";
 import ChickenBox from "Components/ChickenBox";
+import styled from "styled-components";
 import Loader from "Components/Loader";
 import axios from "axios";
+
+const Container = styled.div`
+  width: 40%;
+  height: 100vh;
+  margin: 0 auto;
+  background-color: #30336b;
+`;
+const Title = styled.div`
+  width: 100%;
+  height: 50px;
+  text-align: center;
+`;
+
+const RankBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const ChickenEvent = () => {
   const [loading, setLoading] = useState(true);
@@ -28,9 +48,9 @@ const ChickenEvent = () => {
     <Loader />
   ) : (
     <>
-      <div className="ChickenEvent__container">
-        <div className="ChickenEvent__title">오살 치킨 게임 이벤트</div>
-        <div className="ChickenEvent__rankBox">
+      <Container>
+        <Title>오살 치킨 게임 이벤트</Title>
+        <RankBox>
           {ranking &&
             ranking.map((user, index) => (
               <ChickenBox
@@ -42,8 +62,8 @@ const ChickenEvent = () => {
                 totalMember={totalMember}
               />
             ))}
-        </div>
-      </div>
+        </RankBox>
+      </Container>
     </>
   );
 };

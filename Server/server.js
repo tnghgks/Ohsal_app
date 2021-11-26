@@ -44,7 +44,7 @@ wsServer.on("connection", (socket) => {
   socket.on("nickname", (nickname) => {
     socket["nickname"] = nickname;
   });
-  socket.on("teamShuffle", ({ room }) => {
+  socket.on("teamShuffle", ({ room, teamNumber }) => {
     try {
       let userArr = [];
       let users = wsServer.sockets.adapter.rooms.get(room);
@@ -65,7 +65,7 @@ wsServer.on("connection", (socket) => {
           "인엽앱",
         ];
         userArr.sort(() => Math.random() - 0.5);
-        wsServer.to(room).emit("teamShuffle", userArr);
+        wsServer.to(room).emit("teamShuffle", userArr, teamNumber);
       }
     } catch (error) {
       console.log(error);
