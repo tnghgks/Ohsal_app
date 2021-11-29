@@ -9,86 +9,19 @@ import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import http from "http";
-import SocketIO from "socket.io";
 import "./Bot/discordBot";
 import "./db";
+import io from "./io";
 
 dotenv.config();
 
 const app = express();
 const PORT = 3001;
 const httpServer = http.createServer(app);
-const wsServer = SocketIO(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
-});
+io(httpServer);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-wsServer.on("connection", (socket) => {
-  const userCountChange = (room) => {
-    try {
-      const userArr = [];
-      const users = wsServer.sockets.adapter.rooms.get(room);
-      if (users) {
-        users.forEach((value) => {
-          userArr.push(wsServer.sockets.sockets.get(value).nickname);
-        });
-        wsServer.to(room).emit("getUsers", userArr);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  socket.on("nickname", (nickname) => {
-    socket["nickname"] = nickname;
-  });
-  socket.on("teamShuffle", ({ room, teamNumber }) => {
-    try {
-      let userArr = [];
-      let users = wsServer.sockets.adapter.rooms.get(room);
-      if (users) {
-        users.forEach((value) => {
-          // userArr.push(wsServer.sockets.sockets.get(value).nickname);
-        });
-        userArr = [
-          "호수앱",
-          "현진앱",
-          "지수앱",
-          "윤석앱",
-          "인수앱",
-          "승만앱",
-          "지훈앱",
-          "영민앱",
-          "성민앱",
-          "인엽앱",
-        ];
-        userArr.sort(() => Math.random() - 0.5);
-        wsServer.to(room).emit("teamShuffle", userArr, teamNumber);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
-  socket.on("join", ({ room, username }) => {
-    socket.join(room);
-    userCountChange(room);
-    const text = `${username} 님이 입장하셨습니다.`;
-    wsServer.to(room).emit("message", { room, username: "System", text });
-  });
-
-  socket.on("leave", ({ room, username }) => {
-    socket.leave(room);
-    userCountChange(room);
-    const text = `${username}님이 퇴장하셨습니다.`;
-    wsServer.to(room).emit("message", { room, username: "System", text });
-  });
-
-  socket.on("message", ({ room, username, text }) => {
-    wsServer.to(room).emit("message", { room, username, text });
-  });
-});
 
 app.use(morgan("tiny"));
 app.use(

@@ -9,9 +9,14 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  round: {
+  maxRound: {
     type: Number,
-    default: 0,
+    default: 1,
+    required: true,
+  },
+  currentRound: {
+    type: Number,
+    default: 1,
     required: true,
   },
   userCount: {
@@ -25,6 +30,14 @@ const userSchema = new mongoose.Schema({
       default: null,
     },
   ],
+  currentTeam: {
+    type: Array,
+  },
+  currentTeamMode: {
+    type: Number,
+    default: 4,
+    required: true,
+  },
   startDate: {
     type: String,
     required: true,
