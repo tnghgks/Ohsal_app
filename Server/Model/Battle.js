@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     ref: "Score",
     default: null,
   },
-
   currentTeam: {
     type: Array,
   },
@@ -36,6 +35,9 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 4,
     required: true,
+  },
+  readyUser: {
+    type: Array,
   },
   startDate: {
     type: String,
