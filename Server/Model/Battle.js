@@ -23,13 +23,12 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  scoreId: [
-    {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: "Score",
-      default: null,
-    },
-  ],
+  scoreId: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Score",
+    default: null,
+  },
+
   currentTeam: {
     type: Array,
   },
