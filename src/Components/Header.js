@@ -11,19 +11,27 @@ import {
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
-const Nav = styled.nav`
-  width: 50px;
+const Container = styled.nav`
+  width: ${(props) => (props.$toggle ? "200px" : "50px")};
   height: 100vh;
   position: fixed;
   display: flex;
-  align-items: center;
+  align-items: left;
+  font-size: 20px;
+  background-color: brown;
+  color: #ffeadb;
+`;
+const SubContainer = styled.nav`
+  width: ${(props) => (props.$toggle ? "200px" : "50px")};
+  height: 100vh;
+  display: flex;
+  align-items: left;
   flex-direction: column;
   font-size: 20px;
   background-color: brown;
   color: #ffeadb;
-  padding-top: 10px;
+  padding: 10px;
 `;
-
 const Avatar = styled.img`
   margin-top: 15px;
   width: 40px;
@@ -46,12 +54,17 @@ const MenuButton = styled(Link)`
   background-color: ${(props) => (props.$current ? "#000" : "#fff")};
 `;
 const Logout = styled.a`
+  width: ${(props) => (props.$toggle ? "100px" : "auto")};
   margin-top: 20px;
+  &::after {
+    content: "로그아웃";
+  }
 `;
 
 const Header = ({ authenticate, setAuth, location }) => {
   const history = useHistory();
   const [path, setPath] = useState(location.pathname);
+  const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
     setPath(location.pathname);
@@ -70,34 +83,39 @@ const Header = ({ authenticate, setAuth, location }) => {
       console.log(error);
     }
   };
+  const handleMenuClick = () => {
+    setToggle((toggle) => !toggle);
+  };
 
   return (
-    <Nav>
-      <FontAwesomeIcon icon={faBars} />
-      <Avatar
-        id="userAvatar"
-        src={`https://cdn.discordapp.com/avatars/${authenticate.discordId}/${authenticate.avatar}.png`}
-        alt={authenticate.avatar}
-      />
-      {authenticate && authenticate ? (
-        <Logout href="/" onClick={handleLogout}>
-          <FontAwesomeIcon icon={faSignOutAlt} />
-        </Logout>
-      ) : (
-        ""
-      )}
-      <Menu>
-        <MenuButton to="/" $current={path && path === "/"}>
-          <FontAwesomeIcon icon={faHome} />
-        </MenuButton>
-        <MenuButton to="/event" $current={path && path === "/event"}>
-          <FontAwesomeIcon icon={faCalendarAlt} />
-        </MenuButton>
-        <MenuButton to="/battle" $current={path && path === "/battle"}>
-          <FontAwesomeIcon icon={faDrumstickBite} />
-        </MenuButton>
-      </Menu>
-    </Nav>
+    <Container $toggle={toggle}>
+      <SubContainer $toggle={toggle}>
+        <FontAwesomeIcon icon={faBars} onClick={handleMenuClick} />
+        <Avatar
+          id="userAvatar"
+          src={`https://cdn.discordapp.com/avatars/${authenticate.discordId}/${authenticate.avatar}.png`}
+          alt={authenticate.avatar}
+        />
+        {authenticate && authenticate ? (
+          <Logout href="/" onClick={handleLogout} $toggle={toggle}>
+            <FontAwesomeIcon icon={faSignOutAlt} />
+          </Logout>
+        ) : (
+          ""
+        )}
+        <Menu>
+          <MenuButton to="/" $current={path && path === "/"}>
+            <FontAwesomeIcon icon={faHome} />
+          </MenuButton>
+          <MenuButton to="/event" $current={path && path === "/event"}>
+            <FontAwesomeIcon icon={faCalendarAlt} />
+          </MenuButton>
+          <MenuButton to="/battle" $current={path && path === "/battle"}>
+            <FontAwesomeIcon icon={faDrumstickBite} />
+          </MenuButton>
+        </Menu>
+      </SubContainer>
+    </Container>
   );
 };
 
