@@ -6,11 +6,18 @@ import ChickenEvent from "Pages/ChickenEvent";
 import Battle from "Pages/Battle";
 import NotFound from "Pages/NotFound";
 import Header from "Components/Header";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  overflow: hidden;
+`;
 
 const AppRouter = ({ authenticate, setAuth }) => (
   <Router>
     {authenticate && authenticate ? (
-      <>
+      <Container>
         <Header authenticate={authenticate} setAuth={setAuth} />
         <Switch>
           <Route exact path="/" component={Home} />
@@ -18,7 +25,7 @@ const AppRouter = ({ authenticate, setAuth }) => (
           <Route exact path="/battle" component={Battle} />
           <Route path="*" component={NotFound} />
         </Switch>
-      </>
+      </Container>
     ) : (
       <Switch>
         <Route exact path="/" component={Auth} />

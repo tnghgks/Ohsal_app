@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 import BattleMakerForm from "Components/BattleMakerForm";
@@ -10,14 +10,14 @@ import Loader from "Components/Loader";
 const socket = io("http://localhost:3001/");
 
 const Container = styled.div`
+  width: 100%;
   display: flex;
   justify-content: center;
-  width: 100%;
   height: 100vh;
-  padding-left: 50px;
 `;
 
 const BattleContainer = styled.div`
+  display: flex;
   width: 100%;
   height: 100vh;
 `;
@@ -29,8 +29,14 @@ const Main = styled.div`
   height: 100vh;
   background-color: #000;
   text-align: left;
-  margin-left: 250px;
   line-height: 50px;
+`;
+const LoaderContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1000%;
+  height: 100%;
 `;
 
 const Image = styled.img`
@@ -44,7 +50,6 @@ const Battle = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [mainData, setMainData] = useState(false);
   const [battleList, setBattleList] = useState();
-  const battleContainer = useRef();
 
   const getBattle = async () => {
     const result = await axios({
@@ -56,7 +61,7 @@ const Battle = () => {
 
   return (
     <Container>
-      <BattleContainer ref={battleContainer}>
+      <BattleContainer>
         <BattleList
           setFormVisible={setFormVisible}
           battleList={battleList}
@@ -82,16 +87,18 @@ const Battle = () => {
             />
           )}
           {loading && loading ? (
-            <Loader />
-          ) : mainData ? (
-            <BattleDetail
-              data={mainData}
-              getBattle={getBattle}
-              setMainData={setMainData}
-              socket={socket}
-            />
+            <LoaderContainer>
+              <Loader />
+            </LoaderContainer>
           ) : (
-            ""
+            mainData && (
+              <BattleDetail
+                data={mainData}
+                getBattle={getBattle}
+                setMainData={setMainData}
+                socket={socket}
+              />
+            )
           )}
         </Main>
       </BattleContainer>

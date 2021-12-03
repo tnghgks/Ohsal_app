@@ -12,17 +12,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.nav`
-  width: ${(props) => (props.$toggle ? "200px" : "50px")};
+  width: ${(props) => (props.$toggle ? "60px" : "200px")};
   height: 100vh;
-  position: fixed;
+  position: relative;
   display: flex;
+  min-width: ${(props) => (props.$toggle ? "60px" : "200px")};
   align-items: left;
   font-size: 20px;
   background-color: brown;
   color: #ffeadb;
+  transition: 0.5s;
 `;
-const SubContainer = styled.nav`
-  width: ${(props) => (props.$toggle ? "200px" : "50px")};
+const SubContainer = styled.div`
+  width: 60px;
   height: 100vh;
   display: flex;
   align-items: left;
@@ -31,12 +33,35 @@ const SubContainer = styled.nav`
   background-color: brown;
   color: #ffeadb;
   padding: 10px;
+  transition: 0.5s;
+`;
+const ToggleBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const AvatarCotainer = styled.div`
+  display: flex;
+  width: 200px;
+  justify-content: left;
+  align-items: center;
+  &::after {
+    margin: 0 auto;
+    transition-timing-function: step-end;
+    transition-duration: 0.3s;
+    opacity: ${(props) => (props.$toggle ? "0" : "1")};
+  }
 `;
 const Avatar = styled.img`
-  margin-top: 15px;
+  margin: 15px 0px;
   width: 40px;
   height: 40px;
   border-radius: 25px;
+`;
+const UserName = styled.span`
+  margin-left: 15px;
+  opacity: ${(props) => (props.$toggle ? "0" : "1")};
+  transition: 0.3s;
 `;
 
 const Menu = styled.ul`
@@ -45,19 +70,41 @@ const Menu = styled.ul`
   flex-direction: column;
 `;
 
-const MenuButton = styled(Link)`
+const HomeButton = styled(Link)`
   text-align: center;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 10px;
   line-height: 40px;
-  width: 40px;
+  width: ${(props) => (props.$toggle ? "40px" : "180px")};
   height: 40px;
   border-radius: 10px;
-  background-color: ${(props) => (props.$current ? "#000" : "#fff")};
-`;
-const Logout = styled.a`
-  width: ${(props) => (props.$toggle ? "100px" : "auto")};
-  margin-top: 20px;
+  background-color: ${(props) => (props.$current ? "#000" : "#333")};
+  margin: 5px 0px;
+  transition: 0.5s;
   &::after {
-    content: "로그아웃";
+    margin: 0 auto;
+    transition-timing-function: step-end;
+    transition-duration: 0.3s;
+    opacity: ${(props) => (props.$toggle ? "0" : "1")};
+    content: ${(props) => (props.$toggle ? "''" : "'홈'")};
+  }
+`;
+
+const EventButton = styled(HomeButton)`
+  &::after {
+    content: ${(props) => (props.$toggle ? "''" : "'이벤트'")};
+  }
+`;
+const BattleButton = styled(HomeButton)`
+  &::after {
+    content: ${(props) => (props.$toggle ? "''" : "'내전진행'")};
+  }
+`;
+const LogoutButton = styled(HomeButton)`
+  &::after {
+    content: ${(props) => (props.$toggle ? "''" : "'로그아웃'")};
   }
 `;
 
@@ -90,29 +137,43 @@ const Header = ({ authenticate, setAuth, location }) => {
   return (
     <Container $toggle={toggle}>
       <SubContainer $toggle={toggle}>
-        <FontAwesomeIcon icon={faBars} onClick={handleMenuClick} />
-        <Avatar
-          id="userAvatar"
-          src={`https://cdn.discordapp.com/avatars/${authenticate.discordId}/${authenticate.avatar}.png`}
-          alt={authenticate.avatar}
-        />
+        <ToggleBox>
+          <FontAwesomeIcon icon={faBars} onClick={handleMenuClick} />
+        </ToggleBox>
+        <AvatarCotainer>
+          <Avatar
+            id="userAvatar"
+            src={`https://cdn.discordapp.com/avatars/${authenticate.discordId}/${authenticate.avatar}.png`}
+            alt={authenticate.avatar}
+          />
+          <UserName $toggle={toggle}>{authenticate.nickname}</UserName>
+        </AvatarCotainer>
+
         {authenticate && authenticate ? (
-          <Logout href="/" onClick={handleLogout} $toggle={toggle}>
+          <LogoutButton to="/" onClick={handleLogout} $toggle={toggle}>
             <FontAwesomeIcon icon={faSignOutAlt} />
-          </Logout>
+          </LogoutButton>
         ) : (
           ""
         )}
         <Menu>
-          <MenuButton to="/" $current={path && path === "/"}>
+          <HomeButton $toggle={toggle} to="/" $current={path && path === "/"}>
             <FontAwesomeIcon icon={faHome} />
-          </MenuButton>
-          <MenuButton to="/event" $current={path && path === "/event"}>
+          </HomeButton>
+          <EventButton
+            $toggle={toggle}
+            to="/event"
+            $current={path && path === "/event"}
+          >
             <FontAwesomeIcon icon={faCalendarAlt} />
-          </MenuButton>
-          <MenuButton to="/battle" $current={path && path === "/battle"}>
+          </EventButton>
+          <BattleButton
+            $toggle={toggle}
+            to="/battle"
+            $current={path && path === "/battle"}
+          >
             <FontAwesomeIcon icon={faDrumstickBite} />
-          </MenuButton>
+          </BattleButton>
         </Menu>
       </SubContainer>
     </Container>
