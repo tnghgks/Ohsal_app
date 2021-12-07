@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, withRouter } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,11 +12,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.nav`
-  width: ${(props) => (props.$toggle ? "60px" : "200px")};
+  width: ${(props) => (props.$toggle ? "200px" : "60px")};
   height: 100vh;
   position: relative;
   display: flex;
-  min-width: ${(props) => (props.$toggle ? "60px" : "200px")};
+  min-width: ${(props) => (props.$toggle ? "200px" : "60px")};
   align-items: left;
   font-size: 20px;
   background-color: brown;
@@ -24,7 +24,7 @@ const Container = styled.nav`
   transition: 0.5s;
 `;
 const SubContainer = styled.div`
-  width: 60px;
+  width: ${(props) => (props.$toggle ? "200px" : "60px")};
   height: 100vh;
   display: flex;
   align-items: left;
@@ -36,6 +36,7 @@ const SubContainer = styled.div`
   transition: 0.5s;
 `;
 const ToggleBox = styled.div`
+  width: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,22 +46,18 @@ const AvatarCotainer = styled.div`
   width: 200px;
   justify-content: left;
   align-items: center;
-  &::after {
-    margin: 0 auto;
-    transition-timing-function: step-end;
-    transition-duration: 0.3s;
-    opacity: ${(props) => (props.$toggle ? "0" : "1")};
-  }
 `;
 const Avatar = styled.img`
+  width: 200px;
   margin: 15px 0px;
   width: 40px;
   height: 40px;
   border-radius: 25px;
 `;
 const UserName = styled.span`
+  width: 150px;
   margin-left: 15px;
-  opacity: ${(props) => (props.$toggle ? "0" : "1")};
+  opacity: ${(props) => (props.$toggle ? "1" : "0")};
   transition: 0.3s;
 `;
 
@@ -70,41 +67,101 @@ const Menu = styled.ul`
   flex-direction: column;
 `;
 
-const HomeButton = styled(Link)`
+const Button = styled(Link)`
   text-align: center;
   display: flex;
   justify-content: left;
   align-items: center;
   padding: 10px;
   line-height: 40px;
-  width: ${(props) => (props.$toggle ? "40px" : "180px")};
+  width: ${(props) => (props.$toggle ? "180px" : "40px")};
   height: 40px;
   border-radius: 10px;
   background-color: ${(props) => (props.$current ? "#000" : "#333")};
   margin: 5px 0px;
   transition: 0.5s;
-  &::after {
+  &:after {
     margin: 0 auto;
     transition-timing-function: step-end;
     transition-duration: 0.3s;
-    opacity: ${(props) => (props.$toggle ? "0" : "1")};
-    content: ${(props) => (props.$toggle ? "''" : "'홈'")};
+    opacity: ${(props) => (props.$toggle ? "1" : "0")};
+    content: ${(props) => (props.$toggle ? "'버튼'" : "''")};
+    font-size: 11px;
+  }
+  &:hover {
+    background-color: red;
+    &:after {
+      ${(props) =>
+        props.$toggle ||
+        css`
+          position: absolute;
+          right: -110px;
+          width: 100px;
+          height: 40px;
+          border-radius: 15px;
+          border: solid 3px #000;
+          opacity: 1;
+          background-color: #000;
+          content: "버튼";
+        `}
+    }
   }
 `;
 
-const EventButton = styled(HomeButton)`
-  &::after {
-    content: ${(props) => (props.$toggle ? "''" : "'이벤트'")};
+const HomeButton = styled(Button)`
+  &:after {
+    content: ${(props) => (props.$toggle ? "'홈'" : "''")};
+  }
+  &:hover {
+    &:after {
+      ${(props) =>
+        props.$toggle ||
+        css`
+          content: "홈";
+        `}
+    }
   }
 `;
-const BattleButton = styled(HomeButton)`
+const EventButton = styled(Button)`
   &::after {
-    content: ${(props) => (props.$toggle ? "''" : "'내전진행'")};
+    content: ${(props) => (props.$toggle ? "'이벤트'" : "''")};
+  }
+  &:hover {
+    &:after {
+      ${(props) =>
+        props.$toggle ||
+        css`
+          content: "이벤트";
+        `}
+    }
   }
 `;
-const LogoutButton = styled(HomeButton)`
+const BattleButton = styled(Button)`
   &::after {
-    content: ${(props) => (props.$toggle ? "''" : "'로그아웃'")};
+    content: ${(props) => (props.$toggle ? "'내전진행'" : "''")};
+  }
+  &:hover {
+    &:after {
+      ${(props) =>
+        props.$toggle ||
+        css`
+          content: "내전진행";
+        `}
+    }
+  }
+`;
+const LogoutButton = styled(Button)`
+  &::after {
+    content: ${(props) => (props.$toggle ? "'로그아웃'" : "''")};
+  }
+  &:hover {
+    &:after {
+      ${(props) =>
+        props.$toggle ||
+        css`
+          content: "로그아웃";
+        `}
+    }
   }
 `;
 
@@ -137,7 +194,7 @@ const Header = ({ authenticate, setAuth, location }) => {
   return (
     <Container $toggle={toggle}>
       <SubContainer $toggle={toggle}>
-        <ToggleBox>
+        <ToggleBox $toggle={toggle}>
           <FontAwesomeIcon icon={faBars} onClick={handleMenuClick} />
         </ToggleBox>
         <AvatarCotainer>
